@@ -5,8 +5,13 @@
   height: 100vh;
   .login-container{
     width: 400px;
-    height: 100%;
-    margin: 0 auto;
+    position: absolute;
+    margin:  auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 450px;
     border-radius: 10px ;
     background-color: white;
     .login-content{
@@ -66,6 +71,15 @@
                     color: white;
                 }
 
+        }
+        .input-password{
+            position: relative;
+            i {
+                position: absolute;
+                top: 10px;
+                right: 8px;
+                cursor: pointer;//rê chuột vào có bàn tay
+            }
         }
     }
   }
