@@ -4,13 +4,15 @@ import { push } from "connected-react-router";
 import './Login.scss';
 import '../../styles/common.scss';
 import * as actions from "../../store/actions";
+import {handleLogin} from "../../services/userService"
 class Login extends Component {
     constructor(props) {
         super(props);
         this.state={
             username:'',
             password:'',
-            isShowPassword:false
+            isShowPassword:false,
+            errormassage:''
         }
     }
     handleOnchangInputusername = (event)=>{
@@ -23,9 +25,29 @@ class Login extends Component {
             password: event.target.value
         })
     }
-    handleLogin = ()=>{
-        console.log('username'+ this.state.username);
-        console.log('password'+ this.state.password)
+    handlebuttonLogin = async()=>{
+        console.log('user name:'+this.state.username, 'password:'+this.state.password)
+        this.setState({
+            errormassage:''
+        })
+        try {
+            let data =await handleLogin(this.state.username,this.state.password)
+            if(data && data.errorCode !==0){
+                this.setState({
+                    errormassage:data.message,
+                })
+            }else{
+                this.props.userLoginSucces(data.user)
+            }
+        } catch (error) {
+            if(error.response.data){
+                this.setState({
+                    errormassage:error.response.data.message,
+                })
+            }
+           
+        }
+      
     }
     showPassword =()=>{
         this.setState({
@@ -55,8 +77,12 @@ class Login extends Component {
                             </div>
 
                         </div>
+                        <div className='col-12' style={{color:'red'}}>
+                            {this.state.errormassage}
+
+                        </div>
                        <div className='col-12 mt-4'>
-                            <button className='btn-login btn-text-login' onClick={()=>{this.handleLogin()}}>Login</button>
+                            <button className='btn-login btn-text-login' onClick={()=>{this.handlebuttonLogin()}}>Login</button>
                        </div>
                         <div className='col-12'>
                             <span className='forgot-password'>Forgot your password?</span>
@@ -86,8 +112,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         navigate: (path) => dispatch(push(path)),
-        adminLoginSuccess: (adminInfo) => dispatch(actions.adminLoginSuccess(adminInfo)),
-        adminLoginFail: () => dispatch(actions.adminLoginFail()),
+        userLoginSucces: (userInfo) => dispatch(actions.userLoginSucces(userInfo)),
+        //adminLoginFail: () => dispatch(actions.adminLoginFail()),
     };
 };
 
